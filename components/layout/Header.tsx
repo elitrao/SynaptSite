@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
-import { navigation } from "@/data/landing";
+import { headerNavigation } from "@/data/landing";
 
 const focusableSelector =
   'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -88,11 +88,17 @@ export function Header() {
           </Link>
 
           <nav className="site-header__nav" aria-label="Основная навигация">
-            {navigation.map((item) => (
-              <Link key={item.href} href={item.href}>
-                {item.label}
-              </Link>
-            ))}
+            {headerNavigation.map((item) =>
+              item.href ? (
+                <Link key={item.label} href={item.href}>
+                  {item.label}
+                </Link>
+              ) : (
+                <span key={item.label} aria-disabled="true">
+                  {item.label}
+                </span>
+              ),
+            )}
           </nav>
 
           <Link className="button button--compact site-header__cta" href="/#contact">
@@ -149,12 +155,18 @@ export function Header() {
             </div>
 
             <nav className="mobile-drawer__nav" aria-label="Мобильное меню">
-              {navigation.map((item) => (
-                <Link key={item.href} href={item.href} onClick={closeMenu}>
-                  {item.label}
-                  <ArrowUpRight aria-hidden="true" size={20} strokeWidth={1.7} />
-                </Link>
-              ))}
+              {headerNavigation.map((item) =>
+                item.href ? (
+                  <Link key={item.label} href={item.href} onClick={closeMenu}>
+                    {item.label}
+                    <ArrowUpRight aria-hidden="true" size={20} strokeWidth={1.7} />
+                  </Link>
+                ) : (
+                  <span key={item.label} aria-disabled="true">
+                    {item.label}
+                  </span>
+                ),
+              )}
             </nav>
 
             <Link className="button mobile-drawer__cta" href="/#contact" onClick={closeMenu}>

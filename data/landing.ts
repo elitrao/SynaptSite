@@ -3,6 +3,11 @@ export type NavItem = {
   href: string;
 };
 
+export type HeaderNavItem = {
+  label: string;
+  href?: string;
+};
+
 export type Metric = {
   value: string;
   label: string;
@@ -97,10 +102,18 @@ export const siteConfig = {
 };
 
 export const navigation: NavItem[] = [
-  { label: "Что умеем", href: "/#services" },
+  { label: "Услуги", href: "/#services" },
   { label: "Кейсы", href: "/#cases" },
   { label: "Команда", href: "/#team" },
   { label: "FAQ", href: "/#faq" },
+];
+
+export const headerNavigation: HeaderNavItem[] = [
+  { label: "Кейсы", href: "/#cases" },
+  { label: "Услуги", href: "/#services" },
+  { label: "Компания" },
+  { label: "Блог" },
+  { label: "Контакты" },
 ];
 
 export const hero = {
@@ -181,7 +194,7 @@ export const services: Service[] = [
     title: "AI-десант",
     summary: "Выделенная команда внедрения",
     description:
-      "Заходим в один бизнес-процесс, проектируем решение, собираем рабочую AI-версию и доводим её до запуска.",
+      "Специалист Synapt на месяц входит в вашу команду, внедряет первые AI-решения в рабочие процессы и обучает сотрудников самостоятельно работать с ними после завершения проекта.",
     features: [
       "Разбор процесса и данных",
       "Архитектура и рабочая версия",

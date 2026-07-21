@@ -293,7 +293,7 @@ h3 {
   align-items: center;
   gap: 30px;
   color: var(--text-soft);
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .site-header__nav a {
@@ -302,6 +302,11 @@ h3 {
 
 .site-header__nav a:hover {
   color: var(--text);
+}
+
+.site-header__nav span[aria-disabled="true"] {
+  color: color-mix(in srgb, var(--text-soft) 78%, transparent);
+  cursor: default;
 }
 
 .site-header__cta {
@@ -338,7 +343,8 @@ h3 {
   justify-content: center;
 }
 
-.mobile-drawer__nav a {
+.mobile-drawer__nav a,
+.mobile-drawer__nav > span {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -348,6 +354,10 @@ h3 {
   font-size: clamp(28px, 8vw, 42px);
   line-height: 1.08;
   letter-spacing: -0.015em;
+}
+
+.mobile-drawer__nav > span[aria-disabled="true"] {
+  color: color-mix(in srgb, var(--text-soft) 70%, transparent);
 }
 
 .mobile-drawer__cta {
