@@ -5,7 +5,6 @@ export type NavItem = {
 
 export type Metric = {
   value: string;
-  shortLabel: string;
   label: string;
 };
 
@@ -19,6 +18,7 @@ export type ClientLogo = {
 
 export type Service = {
   id: string;
+  featured?: boolean;
   category: string;
   title: string;
   summary: string;
@@ -39,11 +39,31 @@ export type CaseStudy = {
   id: string;
   title: string;
   description: string;
+  client: string;
+  challenge: string;
+  delivered: string[];
+  duration: string;
+  budget: string;
+  result: string;
   metrics: CaseMetric[];
   outcomes: string[];
   image: string;
   imageAlt: string;
+  gallery: Array<{
+    src: string;
+    alt: string;
+  }>;
+  video: {
+    title: string;
+    src?: string;
+    poster?: string;
+  };
   contentAlign: "left" | "right";
+};
+
+export type TeamCapability = {
+  title: string;
+  description: string;
 };
 
 export type FaqItem = {
@@ -52,8 +72,6 @@ export type FaqItem = {
 };
 
 export type ContactConfig = {
-  recipientEmail: string;
-  recipientIsPlaceholder: boolean;
   privacyPath: string;
 };
 
@@ -65,6 +83,7 @@ export type PrivacyConfig = {
 };
 
 const configuredEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim();
+const configuredContactEmail = process.env.CONTACT_TO_EMAIL?.trim();
 const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
 
 export const siteConfig = {
@@ -78,9 +97,10 @@ export const siteConfig = {
 };
 
 export const navigation: NavItem[] = [
-  { label: "Что умеем", href: "#services" },
-  { label: "Кейсы", href: "#cases" },
-  { label: "FAQ", href: "#faq" },
+  { label: "Что умеем", href: "/#services" },
+  { label: "Кейсы", href: "/#cases" },
+  { label: "Команда", href: "/#team" },
+  { label: "FAQ", href: "/#faq" },
 ];
 
 export const hero = {
@@ -93,11 +113,7 @@ export const hero = {
     "AI-агентов",
   ],
   suffix: "которые работают на вас",
-  description:
-    "Полный цикл в диджитал от веб-разработки до разработки собственных продуктов",
   cta: "Оставить заявку",
-  presentationCta: "Презентация компании",
-  presentationHref: "/assets/synapt-presentation.pdf",
 };
 
 export const clientLogos: ClientLogo[] = [
@@ -141,27 +157,41 @@ export const clientLogos: ClientLogo[] = [
 export const metrics: Metric[] = [
   {
     value: "40+",
-    shortLabel: "продуктов",
-    label: "цифровых продуктов запущено",
+    label: "продуктов запущено для клиентов",
   },
   {
     value: "100%",
-    shortLabel: "проектов",
-    label: "проектов сдаём в срок",
+    label: "сдача в срок закреплена в договоре",
   },
   {
-    value: "4-8",
-    shortLabel: "недель",
-    label: "недель до работающего продукта",
+    value: "4-8 недель",
+    label: "до запуска вместо 6 месяцев найма команды",
   },
   {
     value: "24/7",
-    shortLabel: "поддержка",
-    label: "поддержка продукта после внедрения",
+    label: "остаёмся на связи после запуска",
   },
 ];
 
 export const services: Service[] = [
+  {
+    id: "ai-desant",
+    featured: true,
+    category: "Флагманское направление",
+    title: "AI-десант",
+    summary: "Выделенная команда внедрения",
+    description:
+      "Заходим в один бизнес-процесс, проектируем решение, собираем рабочую AI-версию и доводим её до запуска.",
+    features: [
+      "Разбор процесса и данных",
+      "Архитектура и рабочая версия",
+      "Внедрение и передача в эксплуатацию",
+    ],
+    tags: ["Диагностика", "AI", "Интеграции", "Запуск"],
+    image: "/assets/services/ai-agent.webp",
+    imageAlt: "AI-решение, встроенное в рабочий процесс компании",
+    imageFit: "contain",
+  },
   {
     id: "product",
     category: "Продуктовая разработка",
@@ -238,6 +268,18 @@ export const cases: CaseStudy[] = [
     title: "AI-движок для FoodTech",
     description:
       "Поиск по продуктам и рецептам с учётом реальных остатков, параметров и ограничений.",
+    client: "FoodTech-платформа с каталогом продуктов и рецептов",
+    challenge:
+      "Объединить поиск, реальные складские остатки и данные из PDF-карт в одном рабочем сценарии.",
+    delivered: [
+      "Семантический AI-поиск по базе продуктов",
+      "Перерасчёт пропорций и параметров в реальном времени",
+      "Структурирование продуктовых карт из PDF",
+    ],
+    duration: "Срок уточняется",
+    budget: "Стоимость по запросу",
+    result:
+      "Команда получила масштабируемую базу и поиск, который учитывает реальные остатки и ограничения пользователя.",
     metrics: [
       { value: "30 000+", label: "сообщений обработано" },
       { value: "1 200+", label: "PDF-карт оцифровано" },
@@ -249,6 +291,13 @@ export const cases: CaseStudy[] = [
     ],
     image: "/assets/cases/foodtech.webp",
     imageAlt: "Мобильный интерфейс AI-движка для поиска рецептов",
+    gallery: [
+      {
+        src: "/assets/cases/foodtech.webp",
+        alt: "Интерфейсы AI-движка для FoodTech-платформы",
+      },
+    ],
+    video: { title: "Видео о проекте" },
     contentAlign: "left",
   },
   {
@@ -256,6 +305,18 @@ export const cases: CaseStudy[] = [
     title: "AI-консультант",
     description:
       "Автономный помощник, обученный на корпоративной методологии и базе знаний клиента.",
+    client: "Компания с собственной консультационной методологией",
+    challenge:
+      "Перенести корпоративную экспертизу в самостоятельного цифрового консультанта, доступного сотрудникам в привычном канале.",
+    delivered: [
+      "Обучение модели на корпоративной методологии",
+      "Автономный Telegram Web App",
+      "Контекстный анализ нестандартных ситуаций",
+    ],
+    duration: "Срок уточняется",
+    budget: "Стоимость по запросу",
+    result:
+      "Консультант работает с базой из 800+ страниц и экономит команде более 300 часов ежемесячно.",
     metrics: [
       { value: "300+", label: "часов экономии ежемесячно" },
       { value: "800+", label: "страниц базы знаний" },
@@ -267,6 +328,13 @@ export const cases: CaseStudy[] = [
     ],
     image: "/assets/cases/consultant.webp",
     imageAlt: "Мобильный интерфейс AI-консультанта",
+    gallery: [
+      {
+        src: "/assets/cases/consultant.webp",
+        alt: "Мобильные экраны корпоративного AI-консультанта",
+      },
+    ],
+    video: { title: "Видео о проекте" },
     contentAlign: "right",
   },
   {
@@ -274,6 +342,18 @@ export const cases: CaseStudy[] = [
     title: "AI-аналитика отдела продаж",
     description:
       "Система разбирает звонки и переписки, оценивает качество диалогов и собирает отчётность.",
+    client: "Отдел продаж, работающий со звонками, переписками и amoCRM",
+    challenge:
+      "Проверять все диалоги, видеть качество работы менеджеров и находить причины потери конверсии.",
+    delivered: [
+      "Транскрибация звонков и разбор переписок",
+      "AI-скоринг по скрипту и качеству выявления потребностей",
+      "Отчётность по работе менеджеров в реальном времени",
+    ],
+    duration: "Срок уточняется",
+    budget: "Стоимость по запросу",
+    result:
+      "Система анализирует 100% диалогов и дала клиенту рост конверсии на 20%.",
     metrics: [
       { value: "100%", label: "диалогов в анализе" },
       { value: "+20%", label: "рост конверсии" },
@@ -286,6 +366,13 @@ export const cases: CaseStudy[] = [
     ],
     image: "/assets/cases/sales-analytics.webp",
     imageAlt: "Ноутбук с панелью AI-аналитики отдела продаж",
+    gallery: [
+      {
+        src: "/assets/cases/sales-analytics.webp",
+        alt: "Панель AI-аналитики отдела продаж",
+      },
+    ],
+    video: { title: "Видео о проекте" },
     contentAlign: "left",
   },
   {
@@ -293,6 +380,18 @@ export const cases: CaseStudy[] = [
     title: "Реверс-инжиниринг Legacy-кода",
     description:
       "Перенос математического ядра из DOS-среды в современный web-продукт без изменения расчётов.",
+    client: "Владелец инженерной системы с математическим ядром 1992 года",
+    challenge:
+      "Перенести расчёты из DOS-среды в современный web-интерфейс без потери точности и логики исходной системы.",
+    delivered: [
+      "Полный реверс-инжиниринг расчётной логики",
+      "Перенос математического ядра на современный web-стек",
+      "Новый интерфейс визуализации данных",
+    ],
+    duration: "Срок уточняется",
+    budget: "Стоимость по запросу",
+    result:
+      "Сохранена 100% точность вычислений, а система с историей более 30 лет стала доступна в современном web-продукте.",
     metrics: [
       { value: "100%", label: "точность вычислений" },
       { value: "30+ лет", label: "истории исходной системы" },
@@ -304,7 +403,37 @@ export const cases: CaseStudy[] = [
     ],
     image: "/assets/cases/legacy.webp",
     imageAlt: "Серверное оборудование старой вычислительной системы",
+    gallery: [
+      {
+        src: "/assets/cases/legacy.webp",
+        alt: "Материалы проекта по переносу Legacy-системы",
+      },
+    ],
+    video: { title: "Видео о проекте" },
     contentAlign: "left",
+  },
+];
+
+export const teamCapabilities: TeamCapability[] = [
+  {
+    title: "Product и AI-архитектура",
+    description:
+      "Переводим бизнес-задачу в архитектуру продукта и выбираем технологию без лишней сложности.",
+  },
+  {
+    title: "UX/UI и frontend",
+    description:
+      "Проектируем понятные сценарии и собираем интерфейсы для web, mobile и внутренних систем.",
+  },
+  {
+    title: "Backend и интеграции",
+    description:
+      "Связываем продукт с данными, CRM, ERP, 1С и другими сервисами компании.",
+  },
+  {
+    title: "Инфраструктура и QA",
+    description:
+      "Готовим окружение, проверяем критичные сценарии и поддерживаем продукт после запуска.",
   },
 ];
 
@@ -342,15 +471,13 @@ export const faqItems: FaqItem[] = [
 ];
 
 export const contactConfig: ContactConfig = {
-  recipientEmail: configuredEmail || "hello@synapt.example",
-  recipientIsPlaceholder:
-    !configuredEmail || configuredEmail.toLowerCase().endsWith(".example"),
   privacyPath: "/privacy",
 };
 
 export const privacyConfig: PrivacyConfig = {
   isDraft: true,
   operatorName: "Команда Synapt",
-  contactEmail: contactConfig.recipientEmail,
+  contactEmail:
+    configuredContactEmail || configuredEmail || "hello@synapt.example",
   storagePeriod: "до достижения цели обращения или отзыва согласия",
 };

@@ -53,7 +53,7 @@ export function RotatingHeroHeadline({
         layout={!reduceMotion}
         transition={{
           layout: {
-            duration: 0.42,
+            duration: 0.28,
             ease: [0.16, 1, 0.3, 1],
           },
         }}
@@ -67,11 +67,11 @@ export function RotatingHeroHeadline({
           <motion.span
             key={phrases[activeIndex]}
             className="hero-section__rotator-value"
-            initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+            initial={reduceMotion ? false : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -16 }}
+            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -10 }}
             transition={{
-              duration: reduceMotion ? 0 : 0.42,
+              duration: reduceMotion ? 0 : 0.28,
               ease: [0.16, 1, 0.3, 1],
             }}
           >

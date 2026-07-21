@@ -1,23 +1,20 @@
-export type ContactMailPayload = {
-  name: string;
-  email: string;
+export type ContactRequestPayload = {
   phone: string;
-  idea: string;
+  consent: boolean;
+  website?: string;
 };
 
-export function buildContactMailtoHref(
-  recipientEmail: string,
-  payload: ContactMailPayload,
-) {
-  const subject = `Заявка с сайта Synapt: ${payload.name}`;
-  const body = [
-    `Имя: ${payload.name}`,
-    `Email: ${payload.email || "не указан"}`,
-    `Телефон: ${payload.phone || "не указан"}`,
-    "",
-    "Задача:",
-    payload.idea,
-  ].join("\n");
+export type ContactResponse = {
+  ok: boolean;
+  message?: string;
+  code?: "VALIDATION_ERROR" | "CONFIGURATION_ERROR" | "DELIVERY_ERROR";
+};
 
-  return `mailto:${recipientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+export function normalizePhone(phone: string) {
+  return phone.replace(/[^\d+]/g, "").replace(/(?!^)\+/g, "");
+}
+
+export function isValidPhone(phone: string) {
+  const digits = phone.replace(/\D/g, "");
+  return digits.length >= 10 && digits.length <= 15;
 }

@@ -2,10 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Inter_Tight } from "next/font/google";
 
 import { HeroStarfield } from "@/components/ui/HeroStarfield";
-import { SmoothScroll } from "@/components/ui/SmoothScroll";
 import { siteConfig } from "@/data/landing";
 
-import "lenis/dist/lenis.css";
 import "./globals.css";
 
 const inter = Inter({
@@ -59,7 +57,6 @@ export default function RootLayout({
   return (
     <html lang="ru" className={`${inter.variable} ${interTight.variable}`}>
       <body>
-        <SmoothScroll />
         <HeroStarfield className="site-starfield" />
         {children}
       </body>

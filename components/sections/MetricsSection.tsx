@@ -8,22 +8,8 @@ export function MetricsSection() {
         <Reveal amount={0.1}>
           <dl className="metrics-panel">
             {metrics.map((metric) => (
-              <div
-                className="metrics-panel__item"
-                key={metric.value}
-                tabIndex={0}
-              >
-                <dt>
-                  <span
-                    className="metrics-panel__label-short"
-                    aria-hidden="true"
-                  >
-                    {metric.shortLabel}
-                  </span>
-                  <span className="metrics-panel__label-full">
-                    {metric.label}
-                  </span>
-                </dt>
+              <div className="metrics-panel__item" key={metric.value}>
+                <dt>{metric.label}</dt>
                 <dd>{metric.value}</dd>
               </div>
             ))}

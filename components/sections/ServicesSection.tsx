@@ -28,8 +28,13 @@ export function ServicesSection() {
               className="capabilities-list__item"
               delay={index * 0.07}
             >
-              <article className="capability-row">
+              <article
+                className={`capability-row${service.featured ? " capability-row--featured" : ""}`}
+              >
                 <div className="capability-row__title">
+                  {service.featured ? (
+                    <span className="capability-row__flag">Флагманское направление</span>
+                  ) : null}
                   <h3>{service.title}</h3>
                 </div>
 

@@ -1,9 +1,9 @@
 import type { MetadataRoute } from "next";
 
-import { siteConfig } from "@/data/landing";
+import { cases, siteConfig } from "@/data/landing";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [
+  const staticPages: MetadataRoute.Sitemap = [
     {
       url: siteConfig.siteUrl,
       changeFrequency: "monthly",
@@ -15,4 +15,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.2,
     },
   ];
+
+  const casePages: MetadataRoute.Sitemap = cases.map((caseStudy) => ({
+    url: `${siteConfig.siteUrl}/cases/${caseStudy.id}`,
+    changeFrequency: "monthly",
+    priority: 0.7,
+  }));
+
+  return [...staticPages, ...casePages];
 }

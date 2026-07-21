@@ -2,14 +2,14 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 
-import { contactConfig, navigation } from "@/data/landing";
+import { navigation, privacyConfig } from "@/data/landing";
 
 export function Footer() {
   return (
     <footer className="site-footer">
       <div className="site-container site-footer__grid">
         <div className="site-footer__brand">
-          <a className="brand" href="#top" aria-label="Synapt, на главную">
+          <Link className="brand" href="/" aria-label="Synapt, на главную">
             <Image
               className="brand__logo brand__logo--footer"
               src="/assets/brand/synapt-logo-white.svg"
@@ -17,25 +17,25 @@ export function Footer() {
               width={128}
               height={53}
             />
-          </a>
+          </Link>
           <p>Проектируем и запускаем цифровые продукты под ключ.</p>
         </div>
 
         <nav className="site-footer__nav" aria-label="Навигация в подвале">
           {navigation.map((item) => (
-            <a href={item.href} key={item.href}>
+            <Link href={item.href} key={item.href}>
               {item.label}
-            </a>
+            </Link>
           ))}
         </nav>
 
         <div className="site-footer__contact">
           <span>Связаться</span>
-          {contactConfig.recipientIsPlaceholder ? (
+          {privacyConfig.contactEmail.endsWith(".example") ? (
             <p>Контакт будет добавлен перед публикацией</p>
           ) : (
-            <a href={`mailto:${contactConfig.recipientEmail}`}>
-              {contactConfig.recipientEmail}
+            <a href={`mailto:${privacyConfig.contactEmail}`}>
+              {privacyConfig.contactEmail}
               <ArrowUpRight aria-hidden="true" size={16} strokeWidth={1.7} />
             </a>
           )}
@@ -44,7 +44,7 @@ export function Footer() {
 
       <div className="site-container site-footer__bottom">
         <span>© {new Date().getFullYear()} Synapt</span>
-        <Link href={contactConfig.privacyPath}>Политика конфиденциальности</Link>
+        <Link href="/privacy">Политика конфиденциальности</Link>
       </div>
     </footer>
   );

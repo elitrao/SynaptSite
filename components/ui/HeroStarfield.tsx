@@ -43,16 +43,17 @@ export function HeroStarfield({
     let width = 0;
     let height = 0;
     let animationFrame = 0;
+    let lastFrameTime = 0;
     let stars: Star[] = [];
+    const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
     const pointer = { x: 0, y: 0 };
     const pointerTarget = { x: 0, y: 0 };
 
     const buildStars = () => {
       const random = createRandom(271828);
-      const starCount = Math.min(
-        180,
-        Math.max(80, Math.round((width * height) / 9000)),
-      );
+      const starCount = coarsePointer
+        ? Math.min(96, Math.max(56, Math.round((width * height) / 13000)))
+        : Math.min(180, Math.max(80, Math.round((width * height) / 9000)));
 
       stars = Array.from({ length: starCount }, () => ({
         x: random() * width,
@@ -67,7 +68,10 @@ export function HeroStarfield({
 
     const resize = () => {
       const bounds = canvas.getBoundingClientRect();
-      const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+      const pixelRatio = Math.min(
+        window.devicePixelRatio || 1,
+        coarsePointer ? 1.25 : 1.75,
+      );
 
       width = bounds.width;
       height = bounds.height;
@@ -78,6 +82,12 @@ export function HeroStarfield({
     };
 
     const draw = (time = 0) => {
+      if (!reduceMotion && coarsePointer && time - lastFrameTime < 32) {
+        animationFrame = window.requestAnimationFrame(draw);
+        return;
+      }
+      lastFrameTime = time;
+
       pointer.x += (pointerTarget.x - pointer.x) * 0.035;
       pointer.y += (pointerTarget.y - pointer.y) * 0.035;
       context.clearRect(0, 0, width, height);
@@ -117,7 +127,11 @@ export function HeroStarfield({
     if (reduceMotion) {
       draw();
     } else {
-      window.addEventListener("pointermove", handlePointerMove, { passive: true });
+      if (!coarsePointer) {
+        window.addEventListener("pointermove", handlePointerMove, {
+          passive: true,
+        });
+      }
       animationFrame = window.requestAnimationFrame(draw);
     }
 

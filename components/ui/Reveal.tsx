@@ -21,11 +21,11 @@ export function Reveal({
   return (
     <motion.div
       className={className}
-      initial={reduceMotion ? false : { opacity: 0, y: 18 }}
+      initial={reduceMotion ? false : { opacity: 0, y: 10 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount }}
       transition={{
-        duration: reduceMotion ? 0 : 0.65,
+        duration: reduceMotion ? 0 : 0.36,
         delay: reduceMotion ? 0 : delay,
         ease: [0.16, 1, 0.3, 1],
       }}

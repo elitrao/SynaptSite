@@ -1,8 +1,9 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { ArrowUpRight, Menu, X } from "lucide-react";
+import { ArrowUpRight, Menu, Send, X } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import { navigation } from "@/data/landing";
@@ -75,7 +76,7 @@ export function Header() {
         data-scrolled={isScrolled ? "true" : "false"}
       >
         <div className="site-container site-header__inner">
-          <a className="brand" href="#top" aria-label="Synapt, на главную">
+          <Link className="brand" href="/" aria-label="Synapt, на главную">
             <Image
               className="brand__logo"
               src="/assets/brand/synapt-logo-white.svg"
@@ -84,20 +85,20 @@ export function Header() {
               height={45}
               priority
             />
-          </a>
+          </Link>
 
           <nav className="site-header__nav" aria-label="Основная навигация">
             {navigation.map((item) => (
-              <a key={item.href} href={item.href}>
+              <Link key={item.href} href={item.href}>
                 {item.label}
-              </a>
+              </Link>
             ))}
           </nav>
 
-          <a className="button button--compact site-header__cta" href="#contact">
+          <Link className="button button--compact site-header__cta" href="/#contact">
             Оставить заявку
-            <ArrowUpRight aria-hidden="true" size={16} strokeWidth={1.7} />
-          </a>
+            <Send aria-hidden="true" size={16} strokeWidth={1.8} />
+          </Link>
 
           <button
             ref={menuButtonRef}
@@ -119,7 +120,6 @@ export function Header() {
             id="mobile-navigation"
             ref={drawerRef}
             className="mobile-drawer"
-            data-lenis-prevent
             role="dialog"
             aria-modal="true"
             aria-label="Мобильная навигация"
@@ -129,7 +129,7 @@ export function Header() {
             transition={{ duration: reduceMotion ? 0 : 0.22 }}
           >
             <div className="mobile-drawer__top">
-              <a className="brand" href="#top" onClick={closeMenu}>
+              <Link className="brand" href="/" onClick={closeMenu}>
                 <Image
                   className="brand__logo"
                   src="/assets/brand/synapt-logo-white.svg"
@@ -137,7 +137,7 @@ export function Header() {
                   width={108}
                   height={45}
                 />
-              </a>
+              </Link>
               <button
                 className="icon-button"
                 type="button"
@@ -150,17 +150,17 @@ export function Header() {
 
             <nav className="mobile-drawer__nav" aria-label="Мобильное меню">
               {navigation.map((item) => (
-                <a key={item.href} href={item.href} onClick={closeMenu}>
+                <Link key={item.href} href={item.href} onClick={closeMenu}>
                   {item.label}
                   <ArrowUpRight aria-hidden="true" size={20} strokeWidth={1.7} />
-                </a>
+                </Link>
               ))}
             </nav>
 
-            <a className="button mobile-drawer__cta" href="#contact" onClick={closeMenu}>
+            <Link className="button mobile-drawer__cta" href="/#contact" onClick={closeMenu}>
               Оставить заявку
-              <ArrowUpRight aria-hidden="true" size={18} strokeWidth={1.7} />
-            </a>
+              <Send aria-hidden="true" size={18} strokeWidth={1.8} />
+            </Link>
           </motion.div>
         ) : null}
       </AnimatePresence>

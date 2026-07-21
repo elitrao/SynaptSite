@@ -1,163 +1,131 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { Send } from "lucide-react";
 import { useState, type FormEvent } from "react";
 
 import { contactConfig } from "@/data/landing";
-import { buildContactMailtoHref } from "@/lib/contact";
+import type { ContactResponse } from "@/lib/contact";
+import { isValidPhone } from "@/lib/contact";
 
 type FormErrors = {
-  name?: string;
-  email?: string;
   phone?: string;
-  contact?: string;
-  idea?: string;
   consent?: string;
 };
 
-type FormStatus = "idle" | "recipient-missing" | "opening";
-
-const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+type FormStatus = "idle" | "submitting" | "success" | "error";
 
 export function ContactSection() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [status, setStatus] = useState<FormStatus>("idle");
+  const [statusMessage, setStatusMessage] = useState("");
 
-  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setStatus("idle");
+    setStatusMessage("");
 
-    const form = new FormData(event.currentTarget);
-    const name = String(form.get("name") || "").trim();
-    const email = String(form.get("email") || "").trim();
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement);
     const phone = String(form.get("phone") || "").trim();
-    const idea = String(form.get("idea") || "").trim();
     const consent = form.get("consent") === "on";
+    const website = String(form.get("website") || "").trim();
     const nextErrors: FormErrors = {};
 
-    if (name.length < 2) nextErrors.name = "Укажите имя";
-    if (!email && !phone) nextErrors.contact = "Оставьте email или телефон";
-    if (email && !emailPattern.test(email)) {
-      nextErrors.email = "Проверьте формат email";
+    if (!isValidPhone(phone)) {
+      nextErrors.phone = "Укажите номер телефона с кодом страны";
     }
-    if (phone && phone.replace(/\D/g, "").length < 10) {
-      nextErrors.phone = "Проверьте номер телефона";
+    if (!consent) {
+      nextErrors.consent = "Нужно согласие на обработку данных";
     }
-    if (idea.length < 10) {
-      nextErrors.idea = "Опишите задачу хотя бы в одном предложении";
-    }
-    if (!consent) nextErrors.consent = "Нужно согласие на обработку данных";
 
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
 
-    if (contactConfig.recipientIsPlaceholder) {
-      setStatus("recipient-missing");
-      return;
+    setStatus("submitting");
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone, consent, website }),
+      });
+      const result = (await response.json()) as ContactResponse;
+
+      if (!response.ok || !result.ok) {
+        setStatus("error");
+        setStatusMessage(
+          result.message || "Не получилось отправить заявку. Попробуйте ещё раз.",
+        );
+        return;
+      }
+
+      setStatus("success");
+      setStatusMessage("Заявка отправлена. Свяжемся с вами в ближайшее время.");
+      formElement.reset();
+    } catch {
+      setStatus("error");
+      setStatusMessage(
+        "Не получилось связаться с сервером. Проверьте соединение и повторите попытку.",
+      );
     }
-
-    const href = buildContactMailtoHref(contactConfig.recipientEmail, {
-      name,
-      email,
-      phone,
-      idea,
-    });
-
-    setStatus("opening");
-    window.location.assign(href);
   };
 
   return (
-    <section id="contact" className="section contact-section" aria-labelledby="contact-title">
+    <section
+      id="contact"
+      className="section contact-section"
+      aria-labelledby="contact-title"
+    >
       <div className="contact-section__glow" aria-hidden="true" />
       <div className="site-container contact-section__grid">
         <div className="contact-section__copy">
           <h2 id="contact-title">Поделитесь своей идеей</h2>
           <p>
-            Опишите задачу своими словами. На первой встрече разберём сценарий,
-            риски и состав рабочей версии.
+            Не нужно готовить ТЗ. Оставьте телефон, на первой встрече опишете
+            задачу своими словами, а мы всё разберём.
           </p>
           <div className="contact-section__note">
             <strong>Что будет дальше</strong>
             <span>
-              Уточним контекст, предложим следующий шаг и зафиксируем его без
-              лишней презентации.
+              Свяжемся, уточним контекст и предложим первый понятный этап
+              работы.
             </span>
           </div>
         </div>
 
         <form className="contact-form" noValidate onSubmit={onSubmit}>
           <div className="form-field">
-            <label htmlFor="name">Имя</label>
+            <label htmlFor="phone">Телефон</label>
             <input
-              id="name"
-              name="name"
+              id="phone"
+              name="phone"
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel"
+              placeholder="+7 999 000-00-00"
+              required
+              aria-invalid={Boolean(errors.phone)}
+              aria-describedby="phone-hint phone-error"
+              disabled={status === "submitting"}
+            />
+            <span id="phone-hint" className="form-hint">
+              Можно указать номер, привязанный к Telegram
+            </span>
+            <span id="phone-error" className="form-error">
+              {errors.phone}
+            </span>
+          </div>
+
+          <div className="form-field form-field--honeypot" aria-hidden="true">
+            <label htmlFor="website">Сайт</label>
+            <input
+              id="website"
+              name="website"
               type="text"
-              required
-              autoComplete="name"
-              aria-invalid={Boolean(errors.name)}
-              aria-describedby="name-error"
+              tabIndex={-1}
+              autoComplete="off"
             />
-            <span id="name-error" className="form-error">
-              {errors.name}
-            </span>
-          </div>
-
-          <div
-            className="contact-form__contacts"
-            role="group"
-            aria-label="Контакт для ответа, заполните email или телефон"
-          >
-            <div className="form-field">
-              <label htmlFor="email">Email</label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                inputMode="email"
-                autoComplete="email"
-                aria-invalid={Boolean(errors.email || errors.contact)}
-                aria-describedby="email-error contact-error"
-              />
-              <span id="email-error" className="form-error">
-                {errors.email}
-              </span>
-            </div>
-
-            <div className="form-field">
-              <label htmlFor="phone">Телефон</label>
-              <input
-                id="phone"
-                name="phone"
-                type="tel"
-                inputMode="tel"
-                autoComplete="tel"
-                aria-invalid={Boolean(errors.phone || errors.contact)}
-                aria-describedby="phone-error contact-error"
-              />
-              <span id="phone-error" className="form-error">
-                {errors.phone}
-              </span>
-            </div>
-          </div>
-          <span id="contact-error" className="form-error form-error--contact">
-            {errors.contact}
-          </span>
-
-          <div className="form-field">
-            <label htmlFor="idea">Пожелания, ваша идея</label>
-            <textarea
-              id="idea"
-              name="idea"
-              rows={5}
-              required
-              aria-invalid={Boolean(errors.idea)}
-              aria-describedby="idea-error"
-            />
-            <span id="idea-error" className="form-error">
-              {errors.idea}
-            </span>
           </div>
 
           <div className="contact-form__consent">
@@ -168,10 +136,13 @@ export function ContactSection() {
                 required
                 aria-invalid={Boolean(errors.consent)}
                 aria-describedby="consent-error"
+                disabled={status === "submitting"}
               />
               <span>
                 Согласен на обработку данных согласно{" "}
-                <Link href={contactConfig.privacyPath}>политике конфиденциальности</Link>
+                <Link href={contactConfig.privacyPath}>
+                  политике конфиденциальности
+                </Link>
               </span>
             </label>
             <span id="consent-error" className="form-error">
@@ -179,21 +150,21 @@ export function ContactSection() {
             </span>
           </div>
 
-          <button className="button contact-form__submit" type="submit">
-            Оставить заявку
-            <ArrowUpRight aria-hidden="true" size={18} strokeWidth={1.7} />
+          <button
+            className="button contact-form__submit"
+            type="submit"
+            disabled={status === "submitting"}
+          >
+            {status === "submitting" ? "Отправляем" : "Оставить заявку"}
+            <Send aria-hidden="true" size={18} strokeWidth={1.8} />
           </button>
 
-          <div className="contact-form__status" aria-live="polite">
-            {status === "recipient-missing" ? (
-              <p>
-                Email для заявок пока не подключен. Замените временный адрес
-                перед публикацией сайта.
-              </p>
-            ) : null}
-            {status === "opening" ? (
-              <p>Письмо подготовлено. Открываем ваше почтовое приложение.</p>
-            ) : null}
+          <div
+            className="contact-form__status"
+            data-status={status}
+            aria-live="polite"
+          >
+            {statusMessage ? <p>{statusMessage}</p> : null}
           </div>
         </form>
       </div>
