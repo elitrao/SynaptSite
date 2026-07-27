@@ -1,4 +1,5 @@
 import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 import { Reveal } from "@/components/ui/Reveal";
 import { services } from "@/data/landing";
@@ -40,10 +41,17 @@ export function ServicesSection() {
 
                 <div className="capability-row__body">
                   <p>{service.description}</p>
-                  <a className="capability-row__link" href="#cases">
+                  <Link
+                    className="capability-row__link"
+                    href={
+                      service.id === "ai-desant"
+                        ? "/services/ai-desant"
+                        : "#cases"
+                    }
+                  >
                     Подробнее
                     <ArrowRight aria-hidden="true" size={19} strokeWidth={1.6} />
-                  </a>
+                  </Link>
                 </div>
               </article>
             </Reveal>

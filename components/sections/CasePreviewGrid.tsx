@@ -12,6 +12,12 @@ type CasePreviewGridProps = {
   cases: CaseStudy[];
 };
 
+const casesWithEditorialVisuals = new Set([
+  "foodtech",
+  "consultant",
+  "sales-analytics",
+]);
+
 export function CasePreviewGrid({ cases }: CasePreviewGridProps) {
   const router = useRouter();
   const [selectedCase, setSelectedCase] = useState<CaseStudy | null>(null);
@@ -95,18 +101,28 @@ export function CasePreviewGrid({ cases }: CasePreviewGridProps) {
               </dl>
 
               <div className="case-card__visual">
-                <div
-                  className="case-card__placeholder"
-                  role="img"
-                  aria-label="Нейтральная обложка кейса Synapt"
-                >
+                {casesWithEditorialVisuals.has(caseStudy.id) ? (
                   <Image
-                    src="/assets/brand/synapt-logo-white.svg"
-                    alt=""
-                    width={108}
-                    height={45}
+                    className="case-card__image"
+                    src={caseStudy.image}
+                    alt={caseStudy.imageAlt}
+                    fill
+                    sizes="(max-width: 768px) calc(100vw - 36px), 620px"
                   />
-                </div>
+                ) : (
+                  <div
+                    className="case-card__placeholder"
+                    role="img"
+                    aria-label="Нейтральная обложка кейса Synapt"
+                  >
+                    <Image
+                      src="/assets/brand/synapt-logo-white.svg"
+                      alt=""
+                      width={108}
+                      height={45}
+                    />
+                  </div>
+                )}
               </div>
             </article>
           </div>

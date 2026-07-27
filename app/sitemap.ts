@@ -14,6 +14,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "yearly",
       priority: 0.2,
     },
+    {
+      url: `${siteConfig.siteUrl}/services/ai-desant`,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
   ];
 
   const casePages: MetadataRoute.Sitemap = cases.map((caseStudy) => ({

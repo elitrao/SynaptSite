@@ -55,7 +55,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru" className={`${inter.variable} ${interTight.variable}`}>
+    <html
+      lang="ru"
+      className={`${inter.variable} ${interTight.variable}`}
+      data-scroll-behavior="smooth"
+    >
       <body>
         <HeroStarfield className="site-starfield" />
         {children}
